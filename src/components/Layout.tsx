@@ -246,7 +246,7 @@ export function Layout({
         </header>
 
         {/* 페이지 본문 컨테이너: 가로 100% 전체 폭 활용 */}
-        <main className="w-full flex-1 px-3.5 pb-24 pt-4 sm:px-6 sm:pt-6 lg:px-8 xl:px-10 md:pb-14 md:pt-8">
+        <main className="w-full flex-1 px-3.5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 sm:pt-6 lg:px-8 xl:px-10 md:pb-14 md:pt-8">
           {isSampleMode && tab !== 'home' && tab !== 'privacy' && (
             <div className="mb-4 flex items-center justify-between gap-2.5 rounded-2xl border-2 border-amber-300 bg-amber-50/90 px-3.5 py-2.5 sm:p-4 text-amber-950 shadow-xs dark:border-amber-700/80 dark:bg-amber-950/50 dark:text-amber-100">
               <div className="flex min-w-0 items-center gap-2">

@@ -51,20 +51,25 @@ html[data-font-scale='xlarge'] {
   }
 }
 
-html,
-body,
-#root {
+html {
   min-height: 100%;
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
+  overflow-y: auto;
 }
 
 body {
+  min-height: 100dvh;
+  overflow-x: clip;
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.6;
   letter-spacing: -0.01em;
   @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+#root {
+  min-height: 100dvh;
 }
 
 @media (min-width: 640px) {
