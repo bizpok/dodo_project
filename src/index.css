@@ -1,0 +1,85 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================================================
+   고시인성 루트 폰트 스케일링 (rem 기반 전체 UI 동적 확대)
+   - normal : 루트 16px   (기본 대비 넉넉한 크기)
+   - large  : 루트 17.5px (스마트폰 시인성 최적화 기본값)
+   - xlarge : 루트 19.5px (아주 큰 글씨 모드)
+   ============================================================================ */
+html {
+  font-size: 17.5px;
+  line-height: 1.65;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+html[data-font-scale='normal'] {
+  font-size: 16px;
+}
+
+html[data-font-scale='large'] {
+  font-size: 17.5px;
+}
+
+html[data-font-scale='xlarge'] {
+  font-size: 19.5px;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility btn {
+  @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-base font-bold leading-snug transition
+    active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer;
+}
+
+@layer components {
+  .card {
+    @apply min-w-0 rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-xs dark:border-slate-800 dark:bg-slate-900;
+  }
+  .input {
+    @apply w-full min-h-[52px] rounded-2xl border-2 border-slate-300 bg-white px-4 py-3 text-base leading-normal text-slate-900 outline-none transition
+      focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100;
+  }
+  .btn-primary {
+    @apply btn bg-blue-600 text-white shadow-sm hover:bg-blue-700;
+  }
+  .btn-ghost {
+    @apply btn text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800;
+  }
+  .btn-outline {
+    @apply btn border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800;
+  }
+  .btn-danger {
+    @apply btn bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-500/15 dark:border-red-800/50 dark:text-red-300;
+  }
+  .label {
+    @apply mb-2 block text-sm font-bold text-slate-700 dark:text-slate-300;
+  }
+}
