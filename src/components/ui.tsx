@@ -11,13 +11,13 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mb-4 sm:mb-5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">
+          <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300">
             {subtitle}
           </p>
         )}
@@ -137,11 +137,16 @@ export function Modal({
 }) {
   useEffect(() => {
     if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
   }, [open, onClose]);
 
   if (!open) return null;
@@ -152,21 +157,33 @@ export function Modal({
       onClick={onClose}
     >
       <div
-        className={`max-h-[92vh] w-full ${maxWidth} overflow-y-auto rounded-t-3xl border border-slate-200 bg-white p-5 sm:rounded-3xl sm:p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900`}
+        className={`flex max-h-[90dvh] sm:max-h-[92vh] w-full ${maxWidth} flex-col overflow-hidden rounded-t-3xl border border-slate-200 bg-white shadow-2xl sm:rounded-3xl dark:border-slate-800 dark:bg-slate-900`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6 flex items-center justify-between gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">{title}</h2>
+        {/* 모바일 바텀시트 상단 핸들 인디케이터 */}
+        <div className="flex justify-center pt-2.5 pb-1 sm:hidden">
+          <span className="h-1.5 w-11 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
+
+        {/* 고정 모달 헤더 */}
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3.5 sm:px-8 sm:pt-6 sm:pb-4 dark:border-slate-800">
+          <h2 className="truncate text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="flex size-10 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="flex size-10 shrink-0 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 active:scale-95 dark:hover:bg-slate-800"
             aria-label="모달 닫기"
           >
             <X size={22} />
           </button>
         </div>
-        {children}
+
+        {/* 스크롤 가능한 모달 본문 */}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-8 sm:pt-6">
+          {children}
+        </div>
       </div>
     </div>
   );

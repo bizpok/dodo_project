@@ -128,7 +128,6 @@ export function OrganizationModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            autoFocus
           />
         </Field>
 
@@ -308,7 +307,6 @@ export function ProjectModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            autoFocus
           />
         </Field>
 
@@ -414,8 +412,15 @@ export function TaskModal({
     setAttachments([]);
   }, [open, initial, defaultOrgId, defaultProjectId, organizations, projects]);
 
-  const currentOrg = organizations.find((o) => o.id === organizationId) ?? null;
-  const currentProject = projects.find((p) => p.id === projectId) ?? null;
+  const orgProjects = projects.filter((p) => p.organizationId === organizationId);
+
+  const handleChangeOrgInModal = (nextOrgId: string) => {
+    setOrganizationId(nextOrgId);
+    const nextProjs = projects
+      .filter((p) => p.organizationId === nextOrgId)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+    setProjectId(nextProjs[0]?.id ?? '');
+  };
 
   const handleFilesSelected = async (e: ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
@@ -516,28 +521,44 @@ export function TaskModal({
       maxWidth="sm:max-w-3xl"
       title={initial ? '일정 수정' : '일정 등록'}
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* 조직 및 프로젝트 읽기 전용 표시 영역 */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border-2 border-slate-200/90 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800/70">
-            <span className="block text-xs font-extrabold text-slate-500 dark:text-slate-400">
-              소속 조직
-            </span>
-            <p className="mt-1 truncate text-base font-extrabold text-slate-900 dark:text-white">
-              {currentOrg ? `${currentOrg.icon} ${currentOrg.name}` : '조직 미지정'}
-            </p>
-          </div>
-          <div className="rounded-2xl border-2 border-blue-200/90 bg-blue-50/50 px-4 py-3 dark:border-blue-900/70 dark:bg-blue-950/30">
-            <span className="block text-xs font-extrabold text-blue-600 dark:text-blue-400">
-              대상 프로젝트
-            </span>
-            <p className="mt-1 truncate text-base font-extrabold text-slate-900 dark:text-white">
-              {currentProject ? `📁 ${currentProject.name}` : '프로젝트 미지정'}
-            </p>
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+        {/* 조직 및 프로젝트 선택 영역 (모바일/데스크톱 모두 드롭다운으로 간편 변경 지원) */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Field label="소속 조직" required>
+            <select
+              className="input font-bold"
+              value={organizationId}
+              onChange={(e) => handleChangeOrgInModal(e.target.value)}
+              required
+            >
+              {organizations.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.icon} {o.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="대상 프로젝트" required>
+            <select
+              className="input font-bold"
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+              required
+            >
+              {orgProjects.length === 0 ? (
+                <option value="">소속 프로젝트 없음</option>
+              ) : (
+                orgProjects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    📁 {p.name}
+                  </option>
+                ))
+              )}
+            </select>
+          </Field>
         </div>
 
-        <Field label="일정명 (프로젝트 달성을 위한 추진 과제)" required>
+        <Field label="일정명 (추진 과제)" required>
           <input
             type="text"
             className="input"
@@ -545,15 +566,14 @@ export function TaskModal({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            autoFocus
           />
         </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <Field label="시작일">
             <input
               type="date"
-              className="input"
+              className="input px-3 text-sm sm:text-base"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
             />
@@ -561,7 +581,7 @@ export function TaskModal({
           <Field label="종료일 (목표일)">
             <input
               type="date"
-              className="input"
+              className="input px-3 text-sm sm:text-base"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
@@ -569,7 +589,7 @@ export function TaskModal({
         </div>
 
         <Field label="진행 상태">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             {TASK_STATUS_ORDER.map((st) => {
               const isSelected = status === st;
               const styleInfo = TASK_STATUS_MODAL_STYLE[st];
@@ -578,7 +598,7 @@ export function TaskModal({
                   key={st}
                   type="button"
                   onClick={() => setStatus(st)}
-                  className={`flex min-h-[48px] items-center justify-center gap-1.5 rounded-2xl border-2 px-2.5 py-2 text-base font-extrabold transition cursor-pointer ${
+                  className={`flex min-h-[44px] sm:min-h-[48px] items-center justify-center gap-1.5 rounded-2xl border-2 px-2 py-2 text-sm sm:text-base font-extrabold transition cursor-pointer ${
                     isSelected ? styleInfo.active : styleInfo.inactive
                   }`}
                 >

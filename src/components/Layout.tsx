@@ -179,19 +179,24 @@ export function Layout({
       {/* 메인 콘텐츠 영역 (와이드 웹 화면 전체 활용) */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* 상단 고정 헤더 */}
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-slate-200/90 bg-white/95 px-4 py-3.5 backdrop-blur sm:px-6 lg:px-10 xl:px-12 dark:border-slate-800 dark:bg-slate-900/95">
-          {/* 모바일 로고 */}
+        <header className="sticky top-0 z-30 flex items-center justify-between gap-2.5 border-b border-slate-200/90 bg-white/95 px-3.5 pt-[max(0.65rem,env(safe-area-inset-top))] pb-2.5 backdrop-blur sm:px-6 sm:py-3.5 lg:px-10 xl:px-12 dark:border-slate-800 dark:bg-slate-900/95">
+          {/* 모바일 로고 및 현재 탭 표시 */}
           <button
             type="button"
             onClick={() => onTab('home')}
-            className="flex shrink-0 items-center gap-2.5 text-left md:hidden"
+            className="flex min-w-0 items-center gap-2.5 text-left md:hidden"
           >
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-xs">
-              <FolderKanban size={20} />
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs">
+              <FolderKanban size={18} />
             </div>
-            <span className="text-lg font-extrabold leading-none text-slate-900 dark:text-white">
-              도도 프로젝트
-            </span>
+            <div className="min-w-0">
+              <span className="block truncate text-base font-extrabold leading-tight text-slate-900 dark:text-white">
+                도도 프로젝트
+              </span>
+              <span className="block truncate text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                {TAB_HEADER_TITLE[tab].title}
+              </span>
+            </div>
           </button>
 
           {/* 데스크톱 현재 섹션 타이틀 */}
@@ -204,12 +209,12 @@ export function Layout({
             </p>
           </div>
 
-          <div className="ml-auto flex items-center gap-2.5 md:hidden">
+          <div className="ml-auto flex shrink-0 items-center gap-2 md:hidden">
             {user ? (
               <button
                 type="button"
                 onClick={() => onTab('profile')}
-                className={`inline-flex min-h-[42px] items-center gap-2 rounded-xl border-2 px-3 py-1.5 text-sm font-bold ${
+                className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border-2 px-2.5 py-1 text-xs font-bold transition active:scale-95 ${
                   tab === 'profile'
                     ? 'border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
                     : 'border-slate-300 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100'
@@ -223,17 +228,17 @@ export function Layout({
                     className="size-5 shrink-0 rounded-full object-cover"
                   />
                 ) : (
-                  <UserIcon size={16} />
+                  <UserIcon size={15} />
                 )}
-                <span className="max-w-20 truncate">{displayName}</span>
+                <span className="max-w-16 truncate">{displayName}</span>
               </button>
             ) : (
               <button
                 type="button"
                 onClick={onLogin}
-                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-1.5 text-sm font-extrabold text-white shadow-xs"
+                className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-xs active:scale-95"
               >
-                <LogIn size={16} />
+                <LogIn size={15} />
                 <span>로그인</span>
               </button>
             )}
@@ -241,25 +246,24 @@ export function Layout({
         </header>
 
         {/* 페이지 본문 컨테이너: 가로 100% 전체 폭 활용 */}
-        <main className="w-full flex-1 px-4 pb-28 pt-6 sm:px-6 lg:px-8 xl:px-10 md:pb-14 md:pt-8">
+        <main className="w-full flex-1 px-3.5 pb-24 pt-4 sm:px-6 sm:pt-6 lg:px-8 xl:px-10 md:pb-14 md:pt-8">
           {isSampleMode && tab !== 'home' && tab !== 'privacy' && (
-            <div className="mb-5 flex flex-col justify-between gap-3 rounded-3xl border-2 border-amber-300 bg-amber-50/90 p-4 text-amber-950 shadow-xs sm:flex-row sm:items-center dark:border-amber-700/80 dark:bg-amber-950/50 dark:text-amber-100">
-              <div className="flex items-start gap-2.5 sm:items-center">
-                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-amber-200 px-2.5 py-1 text-xs font-extrabold text-amber-950 dark:bg-amber-800 dark:text-amber-100">
-                  <Sparkles size={14} />
-                  샘플 모드
+            <div className="mb-4 flex items-center justify-between gap-2.5 rounded-2xl border-2 border-amber-300 bg-amber-50/90 px-3.5 py-2.5 sm:p-4 text-amber-950 shadow-xs dark:border-amber-700/80 dark:bg-amber-950/50 dark:text-amber-100">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-amber-200 px-2 py-0.5 text-xs font-extrabold text-amber-950 dark:bg-amber-800 dark:text-amber-100">
+                  <Sparkles size={13} />
+                  샘플
                 </span>
-                <span className="text-sm font-semibold leading-relaxed">
-                  현재 비로그인 상태이므로 예시용 샘플 데이터가 표시됩니다. 로그인하시면 본인 자료만 안전하게 저장됩니다.
+                <span className="truncate sm:whitespace-normal text-xs sm:text-sm font-semibold">
+                  비로그인 예시 자료입니다. 로그인하면 내 자료로 저장됩니다.
                 </span>
               </div>
               <button
                 type="button"
                 onClick={onLogin}
-                className="btn shrink-0 border-2 border-amber-400 bg-white px-4 py-2 text-sm font-extrabold text-amber-950 hover:bg-amber-100 dark:border-amber-700 dark:bg-slate-900 dark:text-amber-200"
+                className="shrink-0 rounded-xl border-2 border-amber-400 bg-white px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-extrabold text-amber-950 hover:bg-amber-100 active:scale-95 dark:border-amber-700 dark:bg-slate-900 dark:text-amber-200"
               >
-                <LogIn size={16} />
-                홈에서 로그인
+                로그인
               </button>
             </div>
           )}
@@ -269,7 +273,7 @@ export function Layout({
       </div>
 
       {/* 스마트폰 하단 3탭 네비게이션 바 */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t-2 border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-lg backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/95">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-slate-200/90 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(15,23,42,0.06)] backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/95">
         {TABS.map(({ id, shortLabel, icon: Icon }) => {
           const isActive = tab === id;
           return (
@@ -277,7 +281,7 @@ export function Layout({
               key={id}
               type="button"
               onClick={() => onTab(id)}
-              className={`relative flex min-h-[64px] flex-col items-center justify-center gap-1 py-2 text-sm font-extrabold transition active:scale-95 ${
+              className={`relative flex min-h-[58px] flex-col items-center justify-center gap-1 py-1.5 text-xs font-extrabold transition active:scale-95 touch-manipulation ${
                 isActive
                   ? 'text-blue-600 dark:text-blue-400'
                   : 'text-slate-500 dark:text-slate-400'
@@ -286,7 +290,7 @@ export function Layout({
               {isActive && (
                 <span className="absolute top-0 h-1 w-10 rounded-full bg-blue-600 dark:bg-blue-400" />
               )}
-              <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+              <Icon size={21} strokeWidth={isActive ? 2.5 : 2} />
               <span className="leading-none tracking-tight">{shortLabel}</span>
             </button>
           );

@@ -160,31 +160,31 @@ export function HomeAuthPanel(_props: { onTab?: (t: Tab) => void }) {
       id="home-auth-section"
       className="card border-2 border-amber-300/90 bg-gradient-to-br from-amber-50/75 via-white to-blue-50/50 shadow-sm dark:border-amber-700/70 dark:from-amber-950/25 dark:via-slate-900 dark:to-slate-900"
     >
-      <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-12 lg:items-center">
         {/* 좌측: 샘플 모드 안내 & Google SNS 원클릭 로그인 */}
-        <div className="space-y-4 lg:col-span-5">
-          <div className="inline-flex items-center gap-2 rounded-2xl bg-amber-200/90 px-3.5 py-1.5 text-sm font-extrabold text-amber-950 shadow-xs dark:bg-amber-800 dark:text-amber-100">
-            <Sparkles size={16} />
+        <div className="space-y-3 sm:space-y-4 lg:col-span-5">
+          <div className="inline-flex items-center gap-1.5 rounded-2xl bg-amber-200/90 px-3 py-1 text-xs sm:text-sm font-extrabold text-amber-950 shadow-xs dark:bg-amber-800 dark:text-amber-100">
+            <Sparkles size={15} />
             샘플 자료 체험 모드
           </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-lg sm:text-2xl font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white">
             로그인하고 나만의 도도 프로젝트를 관리하세요
           </h2>
-          <p className="text-base leading-relaxed text-slate-700 dark:text-slate-300">
-            현재 로그인하지 않은 상태이므로 아래에 <b>체험용 샘플 프로젝트</b>가 표시됩니다. 로그인하시면
-            내 조직과 프로젝트, 할 일 자료가 본인 계정에 안전하게 저장됩니다.
+          <p className="text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300">
+            현재 비로그인 상태이므로 아래에 <b>체험용 샘플 프로젝트</b>가 표시됩니다. 로그인하시면
+            내 조직과 프로젝트, 일정이 본인 계정에 안전하게 저장됩니다.
           </p>
 
           {/* Google SNS 로그인 버튼 */}
-          <div className="pt-1">
-            <p className="mb-2 text-sm font-bold text-slate-600 dark:text-slate-300">
+          <div className="pt-0.5">
+            <p className="mb-1.5 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
               구글 SNS 계정으로 1초 만에 시작하기
             </p>
             <button
               type="button"
               disabled={isBusy}
               onClick={() => void handleOAuth('google')}
-              className="btn-outline w-full sm:w-auto bg-white px-5 py-3 text-base font-extrabold shadow-xs dark:bg-slate-800"
+              className="btn-outline w-full sm:w-auto bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base font-extrabold shadow-xs dark:bg-slate-800"
             >
               {oauthLoading === 'google' ? (
                 <Loader2 size={20} className="animate-spin" />

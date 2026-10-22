@@ -30,7 +30,6 @@ import { ProgressBar } from '../components/ui';
 import {
   computeTaskStats,
   formatDueBadge,
-  formatFileSize,
   getProjectProgress,
   isOverdueActiveTask,
   nextTaskStatus,
@@ -123,6 +122,15 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
     onTab('projects');
   };
 
+  const scrollToFocusSectionOnMobile = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1280) {
+      requestAnimationFrame(() => {
+        const el = document.getElementById('dashboard-focus-section');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  };
+
   // (1) 조직 헤더 클릭 시 화면 이동하지 않고 해당 조직에 속한 모든 일정을 우측 division에 필터링
   const handleSelectOrgOnDashboard = (orgId: string) => {
     if (selectedOrgId === orgId && selectedProjectId === null) {
@@ -130,6 +138,7 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
     } else {
       setSelectedOrgId(orgId);
       setSelectedProjectId(null);
+      scrollToFocusSectionOnMobile();
     }
   };
 
@@ -140,6 +149,7 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
     } else {
       setSelectedOrgId(orgId);
       setSelectedProjectId(projectId);
+      scrollToFocusSectionOnMobile();
     }
   };
 
@@ -147,19 +157,19 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
     selectedOrgId !== null || selectedProjectId !== null || statusFilter !== 'ALL';
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* 비로그인 시에만 로그인/회원가입 안내 패널 표시 */}
       <HomeAuthPanel onTab={onTab} />
 
       {/* 1. 대시보드 상단 핵심 요약 KPI 4열 카드 + 빠른 등록 액션 */}
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+      <section className="space-y-3.5 sm:space-y-4">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between px-0.5">
           <div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+            <h2 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">
               종합 현황 대시보드
             </h2>
           </div>
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2.5">
             <button
               type="button"
               onClick={() => {
@@ -170,9 +180,10 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                 setEditingOrg(null);
                 setOrgModalOpen(true);
               }}
-              className="btn-outline py-2.5 px-4 text-sm"
+              className="btn-outline py-2 px-2.5 sm:py-2.5 sm:px-4 text-xs sm:text-sm"
             >
-              <Plus size={16} /> 새 조직
+              <Plus size={15} className="shrink-0" />
+              <span className="truncate">새 조직</span>
             </button>
             <button
               type="button"
@@ -184,9 +195,10 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                 setEditingProj(null);
                 setProjModalOpen(true);
               }}
-              className="btn-outline py-2.5 px-4 text-sm"
+              className="btn-outline py-2 px-2.5 sm:py-2.5 sm:px-4 text-xs sm:text-sm"
             >
-              <Plus size={16} /> 새 프로젝트
+              <Plus size={15} className="shrink-0" />
+              <span className="truncate">새 프로젝트</span>
             </button>
             <button
               type="button"
@@ -198,14 +210,15 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                 setEditingTask(null);
                 setTaskModalOpen(true);
               }}
-              className="btn-primary py-2.5 px-5 text-sm"
+              className="btn-primary py-2 px-2.5 sm:py-2.5 sm:px-5 text-xs sm:text-sm"
             >
-              <Plus size={18} /> 새 일정 등록
+              <Plus size={16} className="shrink-0" />
+              <span className="truncate">일정 등록</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
           {/* KPI 1: 전체 일정 달성률 */}
           <div
             onClick={() => {
@@ -213,54 +226,54 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
               setSelectedProjectId(null);
               setStatusFilter('ALL');
             }}
-            className="card flex flex-col justify-between gap-3 border-2 border-blue-200/80 bg-gradient-to-br from-blue-50/70 via-white to-white p-6 cursor-pointer transition hover:border-blue-400 hover:shadow-md dark:border-blue-900/50 dark:from-blue-950/30 dark:via-slate-900 dark:to-slate-900"
+            className="card flex flex-col justify-between gap-2 sm:gap-3 border-2 border-blue-200/80 bg-gradient-to-br from-blue-50/70 via-white to-white p-3.5 sm:p-6 cursor-pointer transition hover:border-blue-400 hover:shadow-md active:scale-[0.99] dark:border-blue-900/50 dark:from-blue-950/30 dark:via-slate-900 dark:to-slate-900"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-extrabold text-blue-700 dark:text-blue-300">
-                전체 프로젝트 일정 달성률
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="truncate text-xs sm:text-sm font-extrabold text-blue-700 dark:text-blue-300">
+                전체 일정 달성률
               </span>
-              <span className="flex size-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-xs">
-                <TrendingUp size={20} />
+              <span className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-blue-600 text-white shadow-xs">
+                <TrendingUp size={17} />
               </span>
             </div>
-            <div className="flex items-baseline justify-between gap-2">
-              <p className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
+            <div className="flex flex-wrap items-baseline justify-between gap-1">
+              <p className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
                 {overallStats.percent}%
               </p>
-              <span className="text-sm font-extrabold text-slate-500 dark:text-slate-400">
-                {overallStats.doneTasks} / {overallStats.totalTasks}건 완료
+              <span className="text-[11px] sm:text-sm font-extrabold text-slate-500 dark:text-slate-400">
+                {overallStats.doneTasks}/{overallStats.totalTasks}건 완료
               </span>
             </div>
-            <ProgressBar percent={overallStats.percent} heightClass="h-3" />
+            <ProgressBar percent={overallStats.percent} heightClass="h-2.5 sm:h-3" />
           </div>
 
           {/* KPI 2: 조직 · 프로젝트 현황 */}
           <div
             onClick={() => onTab('projects')}
-            className="card flex flex-col justify-between gap-3 border-2 border-slate-200/90 p-6 cursor-pointer transition hover:border-blue-400 hover:shadow-md dark:border-slate-800"
+            className="card flex flex-col justify-between gap-2 sm:gap-3 border-2 border-slate-200/90 p-3.5 sm:p-6 cursor-pointer transition hover:border-blue-400 hover:shadow-md active:scale-[0.99] dark:border-slate-800"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-extrabold text-slate-600 dark:text-slate-300">
-                운영 중인 조직 · 프로젝트
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="truncate text-xs sm:text-sm font-extrabold text-slate-600 dark:text-slate-300">
+                조직 · 프로젝트
               </span>
-              <span className="flex size-10 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-indigo-950/70 dark:text-indigo-300">
-                <Building2 size={20} />
+              <span className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-indigo-950/70 dark:text-indigo-300">
+                <Building2 size={17} />
               </span>
             </div>
-            <div className="flex items-baseline gap-3">
-              <p className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
-                조직 {organizations.length}개
+            <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-3">
+              <p className="text-xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
+                조직 {organizations.length}
               </p>
-              <span className="text-lg font-extrabold text-indigo-600 dark:text-indigo-400">
-                · 프로젝트 {projects.length}개
+              <span className="text-sm sm:text-lg font-extrabold text-indigo-600 dark:text-indigo-400">
+                · 프로젝트 {projects.length}
               </span>
             </div>
-            <div className="flex items-center justify-between text-xs font-extrabold text-slate-500 dark:text-slate-400">
-              <span>
-                진행중 프로젝트 {projects.filter((p) => p.status === 'active').length}개
+            <div className="flex items-center justify-between text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400">
+              <span className="truncate">
+                진행중 {projects.filter((p) => p.status === 'active').length}개
               </span>
-              <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                프로젝트 관리 <ArrowRight size={14} />
+              <span className="inline-flex shrink-0 items-center gap-0.5 text-blue-600 dark:text-blue-400">
+                관리 <ArrowRight size={12} />
               </span>
             </div>
           </div>
@@ -269,26 +282,27 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
           <div
             onClick={() => {
               setStatusFilter('in_progress');
+              scrollToFocusSectionOnMobile();
             }}
-            className="card flex flex-col justify-between gap-3 border-2 border-slate-200/90 p-6 cursor-pointer transition hover:border-blue-400 hover:shadow-md dark:border-slate-800"
+            className="card flex flex-col justify-between gap-2 sm:gap-3 border-2 border-slate-200/90 p-3.5 sm:p-6 cursor-pointer transition hover:border-blue-400 hover:shadow-md active:scale-[0.99] dark:border-slate-800"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-extrabold text-slate-600 dark:text-slate-300">
-                진행중 · 예정 일정
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="truncate text-xs sm:text-sm font-extrabold text-slate-600 dark:text-slate-300">
+                진행중 · 예정
               </span>
-              <span className="flex size-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-950/70 dark:text-sky-300">
-                <CalendarClock size={20} />
+              <span className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-950/70 dark:text-sky-300">
+                <CalendarClock size={17} />
               </span>
             </div>
-            <div className="flex items-baseline gap-3">
-              <p className="text-3xl sm:text-4xl font-extrabold text-blue-600 dark:text-blue-400">
+            <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-3">
+              <p className="text-2xl sm:text-4xl font-extrabold text-blue-600 dark:text-blue-400">
                 {overallStats.inProgressTasks + overallStats.todoTasks}건
               </p>
-              <span className="text-sm font-extrabold text-slate-500 dark:text-slate-400">
-                (진행중 {overallStats.inProgressTasks} · 예정 {overallStats.todoTasks})
+              <span className="text-[11px] sm:text-sm font-extrabold text-slate-500 dark:text-slate-400">
+                (진행 {overallStats.inProgressTasks} · 예정 {overallStats.todoTasks})
               </span>
             </div>
-            <div className="flex items-center gap-3 text-xs font-extrabold text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2 text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400">
               <span>보류 {overallStats.onHoldTasks}건</span>
               <span>·</span>
               <span>취소 {overallStats.cancelledTasks}건</span>
@@ -299,40 +313,41 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
           <div
             onClick={() => {
               setStatusFilter((prev) => (prev === 'OVERDUE' ? 'ALL' : 'OVERDUE'));
+              scrollToFocusSectionOnMobile();
             }}
-            className={`card flex flex-col justify-between gap-3 border-2 p-6 cursor-pointer transition hover:shadow-md ${
+            className={`card flex flex-col justify-between gap-2 sm:gap-3 border-2 p-3.5 sm:p-6 cursor-pointer transition hover:shadow-md active:scale-[0.99] ${
               overdueTasks.length > 0
                 ? 'border-red-300 bg-red-50/50 hover:border-red-500 dark:border-red-900/70 dark:bg-red-950/25'
                 : 'border-emerald-200/90 bg-emerald-50/40 dark:border-emerald-900/50 dark:bg-emerald-950/20'
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-1.5">
               <span
-                className={`text-sm font-extrabold ${
+                className={`truncate text-xs sm:text-sm font-extrabold ${
                   overdueTasks.length > 0
                     ? 'text-red-700 dark:text-red-300'
                     : 'text-emerald-700 dark:text-emerald-300'
                 }`}
               >
-                완료일 경과 미완료 일정
+                완료일 경과 일정
               </span>
               <span
-                className={`flex size-10 items-center justify-center rounded-2xl ${
+                className={`flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl ${
                   overdueTasks.length > 0
                     ? 'bg-red-600 text-white'
                     : 'bg-emerald-600 text-white'
                 }`}
               >
                 {overdueTasks.length > 0 ? (
-                  <AlertTriangle size={20} />
+                  <AlertTriangle size={17} />
                 ) : (
-                  <CheckCircle2 size={20} />
+                  <CheckCircle2 size={17} />
                 )}
               </span>
             </div>
-            <div className="flex items-baseline justify-between gap-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-1">
               <p
-                className={`text-3xl sm:text-4xl font-extrabold ${
+                className={`text-2xl sm:text-4xl font-extrabold ${
                   overdueTasks.length > 0
                     ? 'text-red-600 dark:text-red-400'
                     : 'text-emerald-700 dark:text-emerald-300'
@@ -340,20 +355,20 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
               >
                 {overdueTasks.length}건
               </p>
-              <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400">
-                {overdueTasks.length > 0 ? '우선 점검 필요' : '지연된 일정 없음'}
+              <span className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400">
+                {overdueTasks.length > 0 ? '우선 점검' : '지연 없음'}
               </span>
             </div>
-            <div className="text-xs font-extrabold text-slate-500 dark:text-slate-400">
-              완료된 전체 일정: {overallStats.doneTasks}건
+            <div className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400">
+              완료된 일정: {overallStats.doneTasks}건
             </div>
           </div>
         </div>
 
-        {/* 진행상태별 일정 분포 division: 진행상태 필터 버튼 + (2) 완료일 경과 버튼 통합 배치 */}
-        <div className="card flex flex-wrap items-center justify-between gap-4 py-4 px-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-extrabold text-slate-700 dark:text-slate-200">
+        {/* 진행상태별 일정 분포 division: 모바일에서는 가로 스와이프 칩으로 한 줄 표시 */}
+        <div className="card flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-2.5 sm:gap-4 py-3.5 px-4 sm:py-4 sm:px-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-200">
               진행상태별 일정 분포
             </span>
             {selectedProject ? (
@@ -366,11 +381,11 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
               </span>
             ) : null}
           </div>
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5 sm:flex-wrap sm:overflow-visible">
             <button
               type="button"
               onClick={() => setStatusFilter('ALL')}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-sm font-extrabold transition cursor-pointer ${
+              className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
                 statusFilter === 'ALL'
                   ? 'border-slate-900 bg-slate-900 text-white shadow-xs dark:border-white dark:bg-white dark:text-slate-900'
                   : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
@@ -387,16 +402,16 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                   key={st}
                   type="button"
                   onClick={() => setStatusFilter((prev) => (prev === st ? 'ALL' : st))}
-                  className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-1.5 text-sm font-extrabold transition cursor-pointer ${
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
                     isActive ? styleInfo.active : TASK_STATUS_STYLE[st]
                   }`}
                 >
                   <span
-                    className="size-2.5 shrink-0 rounded-full"
+                    className="size-2 shrink-0 rounded-full"
                     style={{ backgroundColor: styleInfo.dot }}
                   />
                   <span>{TASK_STATUS_LABEL[st]}</span>
-                  <span>{count}건</span>
+                  <span>{count}</span>
                 </button>
               );
             })}
@@ -407,31 +422,32 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
               onClick={() =>
                 setStatusFilter((prev) => (prev === 'OVERDUE' ? 'ALL' : 'OVERDUE'))
               }
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-sm font-extrabold transition cursor-pointer ${
+              className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer ${
                 statusFilter === 'OVERDUE'
                   ? 'border-red-600 bg-red-600 text-white shadow-sm ring-2 ring-red-500/25'
                   : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-900/70 dark:bg-red-950/50 dark:text-red-300'
               }`}
               title="완료일이 경과된 미완료(예정·진행중) 일정만 필터링합니다."
             >
-              <AlertTriangle size={14} />
-              <span>완료일 경과 ({scopedOverdueCount})</span>
+              <AlertTriangle size={13} />
+              <span>경과 ({scopedOverdueCount})</span>
             </button>
           </div>
         </div>
       </section>
 
       {/* 2. 중단 대시보드: 조직 · 프로젝트별 달성 현황 (좌측) & 집중 관리 주요 일정 (우측) */}
-      <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 sm:gap-8 xl:grid-cols-12">
         {/* 좌측 7컬럼: 조직 및 프로젝트 달성 현황 보드 */}
-        <section className="space-y-4 xl:col-span-7">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+        <section className="space-y-3.5 sm:space-y-4 xl:col-span-7">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-0.5">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <h3 className="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white">
                 조직 · 프로젝트별 달성 현황
               </h3>
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                (조직 또는 프로젝트 클릭 시 우측에 일정 표시)
+              <span className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400">
+                <span className="xl:hidden">(터치 시 아래 일정 필터링)</span>
+                <span className="hidden xl:inline">(조직 또는 프로젝트 클릭 시 우측에 일정 표시)</span>
               </span>
             </div>
             <button
@@ -441,10 +457,10 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                 setSelectedProjectId(null);
                 setStatusFilter('ALL');
               }}
-              className="inline-flex items-center gap-1.5 text-sm font-extrabold text-blue-600 hover:underline cursor-pointer dark:text-blue-400"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-extrabold text-blue-600 hover:underline cursor-pointer dark:text-blue-400"
             >
-              <span>프로젝트 전체 보기</span>
-              <ArrowRight size={16} />
+              <span>전체 초기화</span>
+              <RotateCcw size={13} />
             </button>
           </div>
 
@@ -627,10 +643,10 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
         </section>
 
         {/* 우측 5컬럼: 집중 관리 주요 일정 (좌측 선택 조직/프로젝트 및 상태 필터 반영) */}
-        <section className="space-y-4 xl:col-span-5">
-          <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+        <section id="dashboard-focus-section" className="scroll-mt-20 space-y-3.5 sm:space-y-4 xl:col-span-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+              <h3 className="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white">
                 {selectedProject
                   ? `📁 ${selectedProject.name} 일정`
                   : selectedOrg
@@ -650,7 +666,7 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                   setSelectedProjectId(null);
                   setStatusFilter('ALL');
                 }}
-                className="inline-flex items-center gap-1 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-700 hover:bg-slate-50 cursor-pointer dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                className="inline-flex items-center gap-1 rounded-xl border border-slate-300 bg-white px-2.5 py-1 text-xs font-extrabold text-slate-700 hover:bg-slate-50 cursor-pointer dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
                 <RotateCcw size={12} /> 전체 일정 보기
               </button>
@@ -658,21 +674,21 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
           </div>
 
           {focusList.length === 0 ? (
-            <div className="card py-14 text-center space-y-2">
-              <FolderKanban size={36} className="mx-auto text-slate-400" />
-              <p className="text-lg font-extrabold text-slate-800 dark:text-slate-100">
+            <div className="card py-12 sm:py-14 text-center space-y-2">
+              <FolderKanban size={34} className="mx-auto text-slate-400" />
+              <p className="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">
                 {selectedProject
                   ? `'${selectedProject.name}'에 조회된 일정이 없습니다`
                   : selectedOrg
                     ? `'${selectedOrg.name}'에 조회된 일정이 없습니다`
                     : '조건에 해당하는 일정이 없습니다'}
               </p>
-              <p className="text-sm text-slate-500">
-                좌측에서 다른 조직·프로젝트를 선택하거나 상단 진행상태 필터를 변경해 보세요.
+              <p className="text-xs sm:text-sm text-slate-500">
+                다른 조직·프로젝트를 선택하거나 진행상태 필터를 변경해 보세요.
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               {focusList.map((task) => {
                 const org = organizations.find((o) => o.id === task.organizationId);
                 const proj = projects.find((p) => p.id === task.projectId);
@@ -683,14 +699,14 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                 return (
                   <div
                     key={task.id}
-                    className={`card space-y-3 border-2 p-4 sm:p-5 transition hover:shadow-md ${
+                    className={`card space-y-2.5 sm:space-y-3 border-2 p-3.5 sm:p-5 transition hover:shadow-md ${
                       isOverdue
                         ? 'border-red-300 bg-red-50/30 dark:border-red-900/70 dark:bg-red-950/20'
                         : 'border-slate-200/90 hover:border-blue-300 dark:border-slate-800'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex min-w-0 flex-1 items-start gap-3">
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="flex min-w-0 flex-1 items-start gap-2.5 sm:gap-3">
                         <button
                           type="button"
                           onClick={() => {
@@ -704,9 +720,9 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                           aria-label="완료 체크"
                         >
                           {isDone ? (
-                            <CheckCircle2 size={24} className="text-emerald-600" />
+                            <CheckCircle2 size={23} className="text-emerald-600" />
                           ) : (
-                            <Circle size={24} />
+                            <Circle size={23} />
                           )}
                         </button>
                         <div
@@ -730,7 +746,7 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                             </span>
                           </div>
                           <p
-                            className={`text-base sm:text-lg font-extrabold ${
+                            className={`text-base sm:text-lg font-extrabold leading-snug ${
                               isDone || task.status === 'cancelled'
                                 ? 'line-through text-slate-400'
                                 : 'text-slate-900 dark:text-white'
@@ -741,7 +757,7 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                         </div>
                       </div>
 
-                      <div className="flex shrink-0 items-center gap-1.5">
+                      <div className="hidden sm:flex shrink-0 items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => {
@@ -770,48 +786,81 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
                             setEditingTask(task);
                             setTaskModalOpen(true);
                           }}
-                          className="btn-outline py-1 px-2.5 text-xs"
+                          className="btn-outline py-1 px-2.5 text-xs min-h-[32px]"
                         >
                           <Edit3 size={13} /> 수정
                         </button>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 pl-11">
-                      <span className="inline-flex items-center rounded-xl border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-extrabold text-blue-800 dark:border-blue-900 dark:bg-blue-950/80 dark:text-blue-200">
-                        📅 시작일 : {task.startDate || '미지정'}
-                      </span>
-                      <span
-                        className={`inline-flex items-center rounded-xl border px-2.5 py-0.5 text-xs font-extrabold ${
-                          isOverdue
-                            ? 'border-red-300 bg-red-100 text-red-800 dark:border-red-800 dark:bg-red-950/80 dark:text-red-200'
-                            : 'border-indigo-200 bg-indigo-50 text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-200'
-                        }`}
-                      >
-                        🏁 종료일 : {task.dueDate || '미지정'}
-                      </span>
-                      {dueBadge && (
+                    <div className="flex flex-wrap items-center justify-between gap-2 sm:pl-11">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="inline-flex items-center rounded-xl border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-extrabold text-blue-800 dark:border-blue-900 dark:bg-blue-950/80 dark:text-blue-200">
+                          📅 {task.startDate || '미지정'}
+                        </span>
                         <span
-                          className={`rounded-xl px-2.5 py-0.5 text-xs font-extrabold ${
-                            dueBadge.tone === 'overdue'
-                              ? 'bg-red-600 text-white'
-                              : dueBadge.tone === 'soon'
-                                ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-200'
-                                : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                          className={`inline-flex items-center rounded-xl border px-2.5 py-0.5 text-xs font-extrabold ${
+                            isOverdue
+                              ? 'border-red-300 bg-red-100 text-red-800 dark:border-red-800 dark:bg-red-950/80 dark:text-red-200'
+                              : 'border-indigo-200 bg-indigo-50 text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-200'
                           }`}
                         >
-                          {dueBadge.label}
+                          🏁 {task.dueDate || '미지정'}
                         </span>
-                      )}
-                      {task.attachments && task.attachments.length > 0 && (
-                        <span className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-bold text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                          <Paperclip size={12} /> 첨부 {task.attachments.length}개 (
-                          {formatFileSize(
-                            task.attachments.reduce((acc, a) => acc + a.size, 0),
-                          )}
-                          )
-                        </span>
-                      )}
+                        {dueBadge && (
+                          <span
+                            className={`rounded-xl px-2 py-0.5 text-xs font-extrabold ${
+                              dueBadge.tone === 'overdue'
+                                ? 'bg-red-600 text-white'
+                                : dueBadge.tone === 'soon'
+                                  ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-200'
+                                  : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                            }`}
+                          >
+                            {dueBadge.label}
+                          </span>
+                        )}
+                        {task.attachments && task.attachments.length > 0 && (
+                          <span className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2 py-0.5 text-xs font-bold text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                            <Paperclip size={11} /> {task.attachments.length}개
+                          </span>
+                        )}
+                      </div>
+
+                      {/* 모바일 전용 하단 우측 상태 전환 및 수정 버튼 */}
+                      <div className="flex sm:hidden items-center gap-1.5 ml-auto">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!canEdit) {
+                              requireLogin();
+                              return;
+                            }
+                            setTaskStatus(task.id, nextTaskStatus(task.status));
+                          }}
+                          className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-xs font-extrabold transition active:scale-95 ${TASK_STATUS_STYLE[task.status]}`}
+                        >
+                          <span
+                            className="size-2 rounded-full"
+                            style={{ backgroundColor: TASK_STATUS_MODAL_STYLE[task.status].dot }}
+                          />
+                          <span>{TASK_STATUS_LABEL[task.status]} ↻</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!canEdit) {
+                              requireLogin();
+                              return;
+                            }
+                            setEditingTask(task);
+                            setTaskModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1 rounded-xl border border-slate-300 bg-white px-2.5 py-1 text-xs font-extrabold text-slate-700 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        >
+                          <Edit3 size={12} /> 수정
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

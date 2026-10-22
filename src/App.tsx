@@ -112,7 +112,7 @@ function AppRouter() {
     <Layout tab={tab} onTab={navigateToTab} onLogin={focusHomeAuth}>
       {tab === 'home' && <HomePage onTab={navigateToTab} />}
       {tab === 'projects' && <TasksPage />}
-      {tab === 'settings' && <SettingsPage />}
+      {tab === 'settings' && <SettingsPage onTab={navigateToTab} />}
       {tab === 'privacy' && <PrivacyPolicyPage onBack={() => navigateToTab('home')} />}
     </Layout>
   );

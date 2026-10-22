@@ -87,15 +87,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-3 top-3 z-[100] flex flex-col gap-2.5 sm:inset-x-auto sm:right-4 sm:top-4 sm:w-full sm:max-w-md"
+        className="pointer-events-none fixed inset-x-3 top-[max(0.75rem,env(safe-area-inset-top))] z-[100] flex flex-col gap-2 sm:inset-x-auto sm:right-4 sm:top-4 sm:w-full sm:max-w-md"
       >
         {toasts.map((t) => {
           const style = {
             success:
-              'border-emerald-300 bg-emerald-50 text-emerald-950 dark:border-emerald-700 dark:bg-emerald-950/95 dark:text-emerald-100',
+              'border-emerald-300 bg-emerald-50/95 text-emerald-950 dark:border-emerald-700 dark:bg-emerald-950/95 dark:text-emerald-100',
             error:
-              'border-red-300 bg-red-50 text-red-950 dark:border-red-700 dark:bg-red-950/95 dark:text-red-100',
-            info: 'border-blue-300 bg-blue-50 text-blue-950 dark:border-blue-700 dark:bg-blue-950/95 dark:text-blue-100',
+              'border-red-300 bg-red-50/95 text-red-950 dark:border-red-700 dark:bg-red-950/95 dark:text-red-100',
+            info: 'border-blue-300 bg-blue-50/95 text-blue-950 dark:border-blue-700 dark:bg-blue-950/95 dark:text-blue-100',
           }[t.type];
 
           const Icon =
@@ -104,7 +104,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto flex items-start gap-3 rounded-2xl border-2 p-4 text-base font-semibold shadow-lg backdrop-blur transition ${style}`}
+              className={`pointer-events-auto flex items-start gap-2.5 rounded-2xl border-2 px-3.5 py-3 sm:p-4 text-sm sm:text-base font-semibold shadow-lg backdrop-blur transition ${style}`}
             >
               <Icon size={20} className="mt-0.5 shrink-0" />
               <span className="flex-1 leading-relaxed">{t.message}</span>
