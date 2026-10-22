@@ -1,4 +1,5 @@
 import {
+  CircleHelp,
   FolderKanban,
   Home,
   LogIn,
@@ -13,12 +14,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { useStore } from '../store';
 import { useToast } from './Toast';
 
-export type Tab = 'home' | 'projects' | 'settings' | 'profile' | 'privacy';
+export type Tab = 'home' | 'projects' | 'settings' | 'help' | 'profile' | 'privacy';
 
 export const TABS: { id: Tab; label: string; shortLabel: string; icon: typeof Home }[] = [
   { id: 'home', label: '홈', shortLabel: '홈', icon: Home },
   { id: 'projects', label: '프로젝트', shortLabel: '프로젝트', icon: FolderKanban },
   { id: 'settings', label: '설정', shortLabel: '설정', icon: Settings },
+  { id: 'help', label: '도움말', shortLabel: '도움말', icon: CircleHelp },
 ];
 
 const TAB_HEADER_TITLE: Record<Tab, { title: string; desc: string }> = {
@@ -33,6 +35,10 @@ const TAB_HEADER_TITLE: Record<Tab, { title: string; desc: string }> = {
   settings: {
     title: '환경 설정 및 데이터 관리',
     desc: '화면 글자 크기, 테마, 백업 및 데이터베이스 연결 상태를 관리합니다.',
+  },
+  help: {
+    title: '도움말 · 사용 가이드',
+    desc: '도도 프로젝트의 주요 기능과 3단계(조직 · 프로젝트 · 일정) 관리 사용법을 안내합니다.',
   },
   profile: {
     title: '내 계정 프로필',
@@ -247,7 +253,7 @@ export function Layout({
 
         {/* 페이지 본문 컨테이너: 가로 100% 전체 폭 활용 */}
         <main className="w-full flex-1 px-3.5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 sm:pt-6 lg:px-8 xl:px-10 md:pb-14 md:pt-8">
-          {isSampleMode && tab !== 'home' && tab !== 'privacy' && (
+          {isSampleMode && tab !== 'home' && tab !== 'privacy' && tab !== 'help' && (
             <div className="mb-4 flex items-center justify-between gap-2.5 rounded-2xl border-2 border-amber-300 bg-amber-50/90 px-3.5 py-2.5 sm:p-4 text-amber-950 shadow-xs dark:border-amber-700/80 dark:bg-amber-950/50 dark:text-amber-100">
               <div className="flex min-w-0 items-center gap-2">
                 <span className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-amber-200 px-2 py-0.5 text-xs font-extrabold text-amber-950 dark:bg-amber-800 dark:text-amber-100">
@@ -272,8 +278,8 @@ export function Layout({
         </main>
       </div>
 
-      {/* 스마트폰 하단 3탭 네비게이션 바 */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-slate-200/90 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(15,23,42,0.06)] backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/95">
+      {/* 스마트폰 하단 4탭 네비게이션 바 */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-slate-200/90 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(15,23,42,0.06)] backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/95">
         {TABS.map(({ id, shortLabel, icon: Icon }) => {
           const isActive = tab === id;
           return (

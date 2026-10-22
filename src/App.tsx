@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ToastProvider } from './components/Toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { HomePage } from './pages/HomePage';
+import { HelpPage } from './pages/HelpPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -35,6 +36,7 @@ function resolveInitialTab(): Tab {
   }
 
   if (token === 'tasks' || token === 'projects') return 'projects';
+  if (token === 'help' || token === 'guide') return 'help';
   if (token === 'profile') return 'profile';
   if (token === 'privacy' || token === 'privacy-policy') return 'privacy';
   if (TABS.some((t) => t.id === token)) return token as Tab;
@@ -113,6 +115,7 @@ function AppRouter() {
       {tab === 'home' && <HomePage onTab={navigateToTab} />}
       {tab === 'projects' && <TasksPage />}
       {tab === 'settings' && <SettingsPage onTab={navigateToTab} />}
+      {tab === 'help' && <HelpPage onTab={navigateToTab} />}
       {tab === 'privacy' && <PrivacyPolicyPage onBack={() => navigateToTab('home')} />}
     </Layout>
   );

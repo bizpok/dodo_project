@@ -1,4 +1,12 @@
-import { ChevronRight, Moon, ShieldCheck, Sun, Type, User as UserIcon } from 'lucide-react';
+import {
+  ChevronRight,
+  CircleHelp,
+  Moon,
+  ShieldCheck,
+  Sun,
+  Type,
+  User as UserIcon,
+} from 'lucide-react';
 import { FONT_SCALE_OPTIONS } from '../constants';
 import type { Tab } from '../components/Layout';
 import { SupabaseStatusCard } from '../components/SupabaseStatusCard';
@@ -94,6 +102,17 @@ export function SettingsPage({ onTab }: { onTab?: (t: Tab) => void }) {
                 <ChevronRight size={17} className="text-slate-400" />
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => onTab('help')}
+              className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-left text-sm font-bold text-slate-800 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-100"
+            >
+              <span className="inline-flex items-center gap-2">
+                <CircleHelp size={17} className="text-blue-600 dark:text-blue-400" />
+                도움말 및 사용 가이드 보기
+              </span>
+              <ChevronRight size={17} className="text-slate-400" />
+            </button>
             <button
               type="button"
               onClick={() => onTab('privacy')}
