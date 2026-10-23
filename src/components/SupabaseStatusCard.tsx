@@ -1,6 +1,5 @@
 import { Cloud, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { SUPABASE_PROJECT_REF } from '../lib/supabase';
 import { useStore } from '../store';
 
 const SYNC_LABEL: Record<string, string> = {
@@ -46,7 +45,6 @@ export function SupabaseStatusCard() {
               Supabase 클라우드 연결 상태
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              프로젝트 ID: <code className="font-mono font-bold">{SUPABASE_PROJECT_REF}</code> ·{' '}
               <b>{SYNC_LABEL[syncStatus] ?? syncStatus}</b>
             </p>
           </div>
