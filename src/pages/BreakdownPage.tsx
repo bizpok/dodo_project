@@ -10,7 +10,7 @@ import {
   Layers,
   Plus,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ORG_COLOR_MAP,
   PROJECT_STATUS_LABEL,
@@ -35,8 +35,25 @@ import type { Organization, Project, Task, TaskStatus } from '../types';
 
 export function BreakdownPage() {
   const organizations = useStore((s) => s.organizations);
-  const projects = useStore((s) => s.projects);
-  const tasks = useStore((s) => s.tasks);
+  const allProjects = useStore((s) => s.projects);
+  const allTasks = useStore((s) => s.tasks);
+  const hideCompletedProjects = useStore((s) => s.hideCompletedProjects);
+
+  const projects = useMemo(
+    () =>
+      hideCompletedProjects
+        ? allProjects.filter((p) => p.status !== 'completed')
+        : allProjects,
+    [allProjects, hideCompletedProjects],
+  );
+  const visibleProjectIds = useMemo(() => new Set(projects.map((p) => p.id)), [projects]);
+  const tasks = useMemo(
+    () =>
+      hideCompletedProjects
+        ? allTasks.filter((t) => visibleProjectIds.has(t.projectId))
+        : allTasks,
+    [allTasks, hideCompletedProjects, visibleProjectIds],
+  );
 
   const activeOrgId = useStore((s) => s.activeOrgId);
   const activeProjectId = useStore((s) => s.activeProjectId);

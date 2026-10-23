@@ -280,4 +280,48 @@ describe('도도 프로젝트 계산 및 로그인 데이터 격리 검증', () 
     expect(decoded.startDate).toBe('2026-10-22');
     expect(decoded.attachments).toEqual(attachments);
   });
+
+  it('프로젝트 수정 시 완료 상태(completed) 전환 및 완료된 프로젝트 화면숨김 설정이 정상 동작한다', () => {
+    useStore.getState().setAuthUser('user-test-completed');
+    const org = useStore.getState().addOrganization({
+      name: '테스트 조직',
+      description: '',
+      color: 'blue',
+      icon: '🏢',
+    });
+    const proj = useStore.getState().addProject({
+      organizationId: org!.id,
+      name: '완료 테스트 프로젝트',
+      description: '설명',
+      status: 'active',
+    });
+    expect(proj?.status).toBe('active');
+
+    // 프로젝트 수정 모드에서 '프로젝트 완료' 체크 시 status가 'completed'로 변경됨
+    useStore.getState().updateProject(proj!.id, {
+      status: 'completed',
+    });
+    expect(useStore.getState().projects[0].status).toBe('completed');
+
+    // 완료된 프로젝트 화면숨김 설정 체크/해제
+    expect(useStore.getState().hideCompletedProjects).toBe(false);
+    useStore.getState().setHideCompletedProjects(true);
+    expect(useStore.getState().hideCompletedProjects).toBe(true);
+
+    const visibleProjects = useStore
+      .getState()
+      .projects.filter((p) =>
+        useStore.getState().hideCompletedProjects ? p.status !== 'completed' : true,
+      );
+    expect(visibleProjects.length).toBe(0);
+
+    // 화면숨김 해제 시 다시 조회됨
+    useStore.getState().setHideCompletedProjects(false);
+    const visibleAfterUncheck = useStore
+      .getState()
+      .projects.filter((p) =>
+        useStore.getState().hideCompletedProjects ? p.status !== 'completed' : true,
+      );
+    expect(visibleAfterUncheck.length).toBe(1);
+  });
 });

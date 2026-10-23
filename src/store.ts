@@ -28,6 +28,7 @@ const USER_CACHE_PREFIX = 'dodo_project_user_cache_v2_';
 interface UiPrefs {
   darkMode: boolean;
   fontScale: FontScale;
+  hideCompletedProjects: boolean;
 }
 
 function loadUiPrefs(): UiPrefs {
@@ -41,12 +42,13 @@ function loadUiPrefs(): UiPrefs {
           parsed.fontScale === 'normal' || parsed.fontScale === 'large' || parsed.fontScale === 'xlarge'
             ? parsed.fontScale
             : 'large',
+        hideCompletedProjects: Boolean(parsed.hideCompletedProjects),
       };
     }
   } catch {
     // ignore
   }
-  return { darkMode: false, fontScale: 'large' };
+  return { darkMode: false, fontScale: 'large', hideCompletedProjects: false };
 }
 
 function saveUiPrefs(prefs: UiPrefs) {
@@ -116,6 +118,7 @@ function canMutate(state: { authUserId: string | null; isSampleMode: boolean }):
 interface StoreState extends AppData {
   darkMode: boolean;
   fontScale: FontScale;
+  hideCompletedProjects: boolean;
   isSampleMode: boolean;
   authUserId: string | null;
   activeOrgId: string | null;
@@ -128,6 +131,8 @@ interface StoreState extends AppData {
   toggleDarkMode: () => void;
   setFontScale: (scale: FontScale) => void;
   cycleFontScale: () => void;
+  setHideCompletedProjects: (hide: boolean) => void;
+  toggleHideCompletedProjects: () => void;
 
   setActiveOrg: (orgId: string | null) => void;
   setActiveProject: (projectId: string | null) => void;
@@ -169,6 +174,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
   darkMode: initialPrefs.darkMode,
   fontScale: initialPrefs.fontScale,
+  hideCompletedProjects: initialPrefs.hideCompletedProjects,
   isSampleMode: true,
   authUserId: null,
   activeOrgId: SAMPLE_DATA.organizations[0]?.id ?? null,
@@ -181,12 +187,20 @@ export const useStore = create<StoreState>((set, get) => ({
   toggleDarkMode: () => {
     const nextDark = !get().darkMode;
     set({ darkMode: nextDark });
-    saveUiPrefs({ darkMode: nextDark, fontScale: get().fontScale });
+    saveUiPrefs({
+      darkMode: nextDark,
+      fontScale: get().fontScale,
+      hideCompletedProjects: get().hideCompletedProjects,
+    });
   },
 
   setFontScale: (fontScale) => {
     set({ fontScale });
-    saveUiPrefs({ darkMode: get().darkMode, fontScale });
+    saveUiPrefs({
+      darkMode: get().darkMode,
+      fontScale,
+      hideCompletedProjects: get().hideCompletedProjects,
+    });
   },
 
   cycleFontScale: () => {
@@ -194,7 +208,30 @@ export const useStore = create<StoreState>((set, get) => ({
     const next: FontScale =
       current === 'normal' ? 'large' : current === 'large' ? 'xlarge' : 'normal';
     set({ fontScale: next });
-    saveUiPrefs({ darkMode: get().darkMode, fontScale: next });
+    saveUiPrefs({
+      darkMode: get().darkMode,
+      fontScale: next,
+      hideCompletedProjects: get().hideCompletedProjects,
+    });
+  },
+
+  setHideCompletedProjects: (hideCompletedProjects) => {
+    set({ hideCompletedProjects });
+    saveUiPrefs({
+      darkMode: get().darkMode,
+      fontScale: get().fontScale,
+      hideCompletedProjects,
+    });
+  },
+
+  toggleHideCompletedProjects: () => {
+    const nextHide = !get().hideCompletedProjects;
+    set({ hideCompletedProjects: nextHide });
+    saveUiPrefs({
+      darkMode: get().darkMode,
+      fontScale: get().fontScale,
+      hideCompletedProjects: nextHide,
+    });
   },
 
   setActiveOrg: (orgId) => {

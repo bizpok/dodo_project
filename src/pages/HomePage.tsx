@@ -41,8 +41,25 @@ import type { Organization, Project, Task, TaskStatus } from '../types';
 export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
   const canEdit = useCanEdit();
   const organizations = useStore((s) => s.organizations);
-  const projects = useStore((s) => s.projects);
-  const tasks = useStore((s) => s.tasks);
+  const allProjects = useStore((s) => s.projects);
+  const allTasks = useStore((s) => s.tasks);
+  const hideCompletedProjects = useStore((s) => s.hideCompletedProjects);
+
+  const projects = useMemo(
+    () =>
+      hideCompletedProjects
+        ? allProjects.filter((p) => p.status !== 'completed')
+        : allProjects,
+    [allProjects, hideCompletedProjects],
+  );
+  const visibleProjectIds = useMemo(() => new Set(projects.map((p) => p.id)), [projects]);
+  const tasks = useMemo(
+    () =>
+      hideCompletedProjects
+        ? allTasks.filter((t) => visibleProjectIds.has(t.projectId))
+        : allTasks,
+    [allTasks, hideCompletedProjects, visibleProjectIds],
+  );
 
   const setActiveOrg = useStore((s) => s.setActiveOrg);
   const setActiveProject = useStore((s) => s.setActiveProject);
@@ -83,14 +100,14 @@ export function HomePage({ onTab }: { onTab: (t: Tab) => void }) {
 
   // 선택된 조직 또는 프로젝트 범위 내 일정 (미선택 시 전체 일정)
   const scopedTasks = useMemo(() => {
-    if (selectedProjectId) {
-      return tasks.filter((t) => t.projectId === selectedProjectId);
+    if (selectedProject) {
+      return tasks.filter((t) => t.projectId === selectedProject.id);
     }
     if (selectedOrgId) {
       return tasks.filter((t) => t.organizationId === selectedOrgId);
     }
     return tasks;
-  }, [tasks, selectedOrgId, selectedProjectId]);
+  }, [tasks, selectedOrgId, selectedProject]);
 
   // 전체 통계 계산
   const overallStats = useMemo(() => computeTaskStats(tasks), [tasks]);

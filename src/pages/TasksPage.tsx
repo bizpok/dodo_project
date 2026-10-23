@@ -18,6 +18,8 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import {
   ORG_COLOR_MAP,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_STYLE,
   TASK_STATUS_LABEL,
   TASK_STATUS_MODAL_STYLE,
   TASK_STATUS_ORDER,
@@ -42,8 +44,25 @@ import type { Organization, Project, Task, TaskStatus } from '../types';
 export function TasksPage() {
   const canEdit = useCanEdit();
   const organizations = useStore((s) => s.organizations);
-  const projects = useStore((s) => s.projects);
-  const tasks = useStore((s) => s.tasks);
+  const allProjects = useStore((s) => s.projects);
+  const allTasks = useStore((s) => s.tasks);
+  const hideCompletedProjects = useStore((s) => s.hideCompletedProjects);
+
+  const projects = useMemo(
+    () =>
+      hideCompletedProjects
+        ? allProjects.filter((p) => p.status !== 'completed')
+        : allProjects,
+    [allProjects, hideCompletedProjects],
+  );
+  const visibleProjectIds = useMemo(() => new Set(projects.map((p) => p.id)), [projects]);
+  const tasks = useMemo(
+    () =>
+      hideCompletedProjects
+        ? allTasks.filter((t) => visibleProjectIds.has(t.projectId))
+        : allTasks,
+    [allTasks, hideCompletedProjects, visibleProjectIds],
+  );
 
   const activeOrgId = useStore((s) => s.activeOrgId);
   const activeProjectId = useStore((s) => s.activeProjectId);
@@ -114,6 +133,12 @@ export function TasksPage() {
   const displayedProjects = useMemo(() => {
     if (projectFilter === 'ALL') return orgProjects;
     return orgProjects.filter((p) => p.id === projectFilter);
+  }, [orgProjects, projectFilter]);
+
+  useEffect(() => {
+    if (projectFilter !== 'ALL' && !orgProjects.some((p) => p.id === projectFilter)) {
+      setProjectFilter('ALL');
+    }
   }, [orgProjects, projectFilter]);
 
   // 조직 + 프로젝트 범위 내 일정 목록 (상태/기간 필터 적용 전 기준 건수 계산용)
@@ -778,9 +803,16 @@ export function TasksPage() {
                             {projOrg.icon} {projOrg.name}
                           </span>
                         )}
-                        <h3 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">
-                          {proj.name}
-                        </h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+                            {proj.name}
+                          </h3>
+                          <span
+                            className={`rounded-xl border px-2.5 py-0.5 text-xs font-extrabold ${PROJECT_STATUS_STYLE[proj.status]}`}
+                          >
+                            {PROJECT_STATUS_LABEL[proj.status]}
+                          </span>
+                        </div>
                         {proj.description && (
                           <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300">
                             {proj.description}

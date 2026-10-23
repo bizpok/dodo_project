@@ -19,6 +19,8 @@ export function SettingsPage({ onTab }: { onTab?: (t: Tab) => void }) {
   const setFontScale = useStore((s) => s.setFontScale);
   const darkMode = useStore((s) => s.darkMode);
   const toggleDarkMode = useStore((s) => s.toggleDarkMode);
+  const hideCompletedProjects = useStore((s) => s.hideCompletedProjects);
+  const setHideCompletedProjects = useStore((s) => s.setHideCompletedProjects);
   const { user } = useAuth();
 
   return (
@@ -76,6 +78,25 @@ export function SettingsPage({ onTab }: { onTab?: (t: Tab) => void }) {
             {darkMode ? <Sun size={17} /> : <Moon size={17} />}
             {darkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
           </button>
+        </div>
+
+        <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+          <label className="flex items-center justify-between gap-3 rounded-2xl border-2 border-slate-200 bg-slate-50/70 px-4 py-3.5 cursor-pointer select-none transition hover:border-blue-400 dark:border-slate-800 dark:bg-slate-800/50">
+            <div className="space-y-0.5">
+              <span className="block text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
+                완료된 프로젝트 화면숨김
+              </span>
+              <span className="block text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                체크 시 모든 조회 화면에서 &apos;프로젝트 완료&apos;가 체크된 프로젝트는 조회되지 않습니다.
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              className="size-5 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              checked={hideCompletedProjects}
+              onChange={(e) => setHideCompletedProjects(e.target.checked)}
+            />
+          </label>
         </div>
       </div>
 

@@ -214,6 +214,7 @@ export function ProjectModal({
   const [organizationId, setOrganizationId] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -222,6 +223,7 @@ export function ProjectModal({
       );
       setName(initial?.name ?? '');
       setDescription(initial?.description ?? '');
+      setIsCompleted(initial?.status === 'completed');
     }
   }, [open, initial, defaultOrgId, organizations]);
 
@@ -241,10 +243,16 @@ export function ProjectModal({
     }
 
     if (initial) {
+      const nextStatus = isCompleted
+        ? 'completed'
+        : initial.status === 'completed'
+          ? 'active'
+          : initial.status;
       updateProject(initial.id, {
         organizationId,
         name,
         description,
+        status: nextStatus,
       });
       toastSuccess('프로젝트 정보가 수정되었습니다.');
     } else {
@@ -320,6 +328,27 @@ export function ProjectModal({
           />
         </Field>
 
+        {initial && (
+          <div className="rounded-2xl border-2 border-slate-200 bg-slate-50/70 p-3.5 sm:p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="size-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                checked={isCompleted}
+                onChange={(e) => setIsCompleted(e.target.checked)}
+              />
+              <div>
+                <span className="block text-base font-extrabold text-slate-900 dark:text-white">
+                  프로젝트 완료
+                </span>
+                <span className="block text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                  체크하면 프로젝트가 완료 상태로 전환됩니다. (설정에서 완료된 프로젝트 화면숨김 가능)
+                </span>
+              </div>
+            </label>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2">
           {initial ? (
             <button type="button" onClick={handleDelete} className="btn-danger">
@@ -361,11 +390,16 @@ export function TaskModal({
   const canEdit = useCanEdit();
   const authUserId = useStore((s) => s.authUserId);
   const organizations = useStore((s) => s.organizations);
-  const projects = useStore((s) => s.projects);
+  const allProjects = useStore((s) => s.projects);
+  const hideCompletedProjects = useStore((s) => s.hideCompletedProjects);
   const addTask = useStore((s) => s.addTask);
   const updateTask = useStore((s) => s.updateTask);
   const deleteTask = useStore((s) => s.deleteTask);
   const { toastSuccess, toastError } = useToast();
+
+  const projects = hideCompletedProjects
+    ? allProjects.filter((p) => p.status !== 'completed' || p.id === initial?.projectId)
+    : allProjects;
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
